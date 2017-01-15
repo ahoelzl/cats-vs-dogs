@@ -64,7 +64,13 @@ print(label)
 
 sess = tf.Session()
 
+# Optional Image and Label Batching
+image_batch, label_batch = tf.train.batch([image, label],
+                                          batch_size=10)
+
+
+
 init_op = tf.global_variables_initializer()
 sess.run(init_op)
-sess.run(label)
+sess.run(image_batch)
 sess.close()
