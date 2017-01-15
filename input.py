@@ -24,20 +24,22 @@ def read_labeled_image_list(image_list_file):
     trainpath = "../data/train/*.jpg" 
     filenames = glob.glob(trainpath)
     #print("filenames: ",filenames.__class__.__name__)
-    labels = map( get_label, filenames)
+    labels = list(map( get_label, filenames))
     return filenames, labels
 
 
-def load_images_from_disk(input_queue):
+def read_images_from_disk(input_queue):
     """Consumes a single filename and label as a ' '-delimited string.
     Args:
       filename_and_label_tensor: A scalar string tensor.
     Returns:
       Two tensors: the decoded image, and the string label.
     """
-    label = get_label(input_queue)
-    file_contents = tf.read_file(input_queue)
+    label = input_queue[1]
+    print(label)
+    file_contents = tf.read_file(input_queue[0])
     example = tf.image.decode_png(file_contents, channels=3)
+    print(example)
     return example, label
 
 image_list, label_list = read_labeled_image_list("../data/train/*.jpg")
@@ -46,12 +48,23 @@ image_list, label_list = read_labeled_image_list("../data/train/*.jpg")
 images = ops.convert_to_tensor(image_list, dtype=dtypes.string)
 labels = ops.convert_to_tensor(label_list, dtype=dtypes.int32)
 
-num_epochs = 100
+num_epochs = 1
 
 # Makes an input queue
 input_queue = tf.train.slice_input_producer([images, labels],
                                             num_epochs=num_epochs,
                                             shuffle=True)
 
-with tf.Session() as sess:
-        result = sess.run([input_queue])
+
+
+image, label = read_images_from_disk(input_queue)
+
+print(image)
+print(label)
+
+sess = tf.Session()
+
+init_op = tf.global_variables_initializer()
+sess.run(init_op)
+sess.run(label)
+sess.close()

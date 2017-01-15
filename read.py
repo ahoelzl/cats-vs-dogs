@@ -13,6 +13,8 @@ import glob
 trainpath = "../data/train/*.jpg"
 length = len(glob.glob(trainpath))
 length=3
+
+
 filename_queue = tf.train.string_input_producer(
     tf.train.match_filenames_once(trainpath))
 
@@ -25,6 +27,7 @@ image = []
 label = []
 
 def get_label(filename):
+    print(filename)
     if 'cat' in filename:
         return 0
 
@@ -40,7 +43,7 @@ for i in range(length):
     # Decode the image as a JPEG file, this will turn it into a Tensor which we can
     # then use in training.
     image.append(tf.image.decode_jpeg(image_file))
-    label.append(get_label(file_name.eval()))
+    label.append(get_label(file_name))
 # Start a new session to show example output.
 with tf.Session() as sess:
     # Required to get the filename matching to run.
