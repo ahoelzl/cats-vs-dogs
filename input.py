@@ -39,8 +39,11 @@ def read_images_from_disk(input_queue):
     print(label)
     file_contents = tf.read_file(input_queue[0])
     example = tf.image.decode_png(file_contents, channels=3)
+    example = tf.image.resize_image_with_crop_or_pad(example, 224, 224)
     print(example)
     return example, label
+
+	
 
 image_list, label_list = read_labeled_image_list("../data/train/*.jpg")
 
@@ -52,12 +55,14 @@ num_epochs = 1
 
 # Makes an input queue
 input_queue = tf.train.slice_input_producer([images, labels],
-                                            num_epochs=num_epochs,
+                                            num_epochs=None,
                                             shuffle=True)
 
 
 
+
 image, label = read_images_from_disk(input_queue)
+
 
 print(image)
 print(label)
@@ -65,12 +70,14 @@ print(label)
 sess = tf.Session()
 
 # Optional Image and Label Batching
-image_batch, label_batch = tf.train.batch([image, label],
-                                          batch_size=10)
 
 
 
 init_op = tf.global_variables_initializer()
 sess.run(init_op)
-sess.run(image_batch)
+images = sess.run(images)
+print(images)
+labels = sess.run(labels)
+print(image)
 sess.close()
+quit()
